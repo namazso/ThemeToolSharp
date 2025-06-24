@@ -97,28 +97,10 @@ namespace ThemeToolSharp
 
     public static class ThemeManager2
     {
-        [DllImport("ole32.dll", EntryPoint = "CoCreateInstance", ExactSpelling = true, PreserveSig = false)]
-        private static extern int CoCreateInstance(
-            [In, MarshalAs(UnmanagedType.LPStruct)]
-            Guid rclsid,
-            IntPtr pUnkOuter,
-            uint dwClsContext,
-            [In, MarshalAs(UnmanagedType.LPStruct)]
-            Guid riid,
-            [MarshalAs(UnmanagedType.IUnknown)] out object ppv
-        );
-
         private const string CLSID = "9324da94-50ec-4a14-a770-e90ca03e7c8f";
 
         public static IThemeManager2 CreateInstance()
         {
-            /*CoCreateInstance(
-                Guid.Parse(CLSID),
-                IntPtr.Zero,
-                1, // CLSCTX_INPROC_SERVER
-                typeof(IThemeManager2).GUID,
-                out var obj);
-            return (IThemeManager2)obj;*/
             return (IThemeManager2)Activator.CreateInstance(Type.GetTypeFromCLSID(new Guid(CLSID)));
         }
     }
