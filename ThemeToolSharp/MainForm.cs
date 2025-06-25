@@ -17,6 +17,7 @@
 
 using System;
 using System.Windows.Forms;
+using ThemeToolSharp.Properties;
 
 namespace ThemeToolSharp
 {
@@ -26,7 +27,6 @@ namespace ThemeToolSharp
 
         public MainForm()
         {
-            _themeManager = ThemeManager2.CreateInstance();
             InitializeComponent();
         }
 
@@ -51,9 +51,51 @@ namespace ThemeToolSharp
             }
         }
 
+        private void InitializeThemes()
+        {
+            _themeManager = ThemeManager2.CreateInstance();
+            _themeManager.Init(
+                InitializationFlags.ThemeInitNoFlags
+                | (checkUnknownInit1.Checked ? InitializationFlags.ThemeInitFlagUnk1 : 0)
+                | (checkUnknownInit2.Checked ? InitializationFlags.ThemeInitFlagUnk2 : 0)
+            );
+        }
+
+        private void LoadSettings()
+        {
+            checkIgnoreBackground.Checked = Settings.Default.ThemeIgnoreBackground;
+            checkIgnoreCursor.Checked = Settings.Default.ThemeIgnoreCursor;
+            checkIgnoreDesktopIcons.Checked = Settings.Default.ThemeIgnoreDesktopIcons;
+            checkIgnoreColor.Checked = Settings.Default.ThemeIgnoreColor;
+            checkIgnoreSound.Checked = Settings.Default.ThemeIgnoreSound;
+            checkIgnoreScreensaver.Checked = Settings.Default.ThemeIgnoreScreensaver;
+            checkUnknown1.Checked = Settings.Default.ThemeUnknownFlag1;
+            checkUnknown2.Checked = Settings.Default.ThemeUnknownFlag2;
+            checkLogonUI.Checked = Settings.Default.ThemeDoNotSetLogonUi;
+            checkUnknownInit1.Checked = Settings.Default.InitUnknownFlag1;
+            checkUnknownInit2.Checked = Settings.Default.InitUnknownFlag2;
+        }
+        
+        private void SaveSettings()
+        {
+            Settings.Default.ThemeIgnoreBackground = checkIgnoreBackground.Checked;
+            Settings.Default.ThemeIgnoreCursor = checkIgnoreCursor.Checked;
+            Settings.Default.ThemeIgnoreDesktopIcons = checkIgnoreDesktopIcons.Checked;
+            Settings.Default.ThemeIgnoreColor = checkIgnoreColor.Checked;
+            Settings.Default.ThemeIgnoreSound = checkIgnoreSound.Checked;
+            Settings.Default.ThemeIgnoreScreensaver = checkIgnoreScreensaver.Checked;
+            Settings.Default.ThemeUnknownFlag1 = checkUnknown1.Checked;
+            Settings.Default.ThemeUnknownFlag2 = checkUnknown2.Checked;
+            Settings.Default.ThemeDoNotSetLogonUi = checkLogonUI.Checked;
+            Settings.Default.InitUnknownFlag1 = checkUnknownInit1.Checked;
+            Settings.Default.InitUnknownFlag2 = checkUnknownInit2.Checked;
+            Settings.Default.Save();
+        }
+
         private void MainForm_Load(object sender, EventArgs e)
         {
-            _themeManager.Init(InitializationFlags.ThemeInitNoFlags);
+            LoadSettings();
+            InitializeThemes();
             UpdateThemes();
         }
 
@@ -65,13 +107,9 @@ namespace ThemeToolSharp
 
         private void btnReInitialize_Click(object sender, EventArgs e)
         {
-            _themeManager = ThemeManager2.CreateInstance();
-            _themeManager.Init(
-                InitializationFlags.ThemeInitNoFlags
-                | (checkUnknownInit1.Checked ? InitializationFlags.ThemeInitFlagUnk1 : 0)
-                | (checkUnknownInit2.Checked ? InitializationFlags.ThemeInitFlagUnk2 : 0)
-            );
+            InitializeThemes();
             UpdateThemes();
+            SaveSettings();
         }
 
         private void btnApply_Click(object sender, EventArgs e)
@@ -96,6 +134,7 @@ namespace ThemeToolSharp
             {
                 _themeManager.UpdateColorSettingsForLogonUI();
             }
+            SaveSettings();
         }
     }
 }
